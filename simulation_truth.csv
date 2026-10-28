@@ -1,0 +1,4 @@
+incident_id,true_root_cause,true_impact_units,capacity_reduction_pct,true_incident_flag
+INC-0001,Staging Capacity,495,0.35,True
+INC-0002,Staging Capacity,624,0.5,True
+INC-0003,Staging Capacity,317,0.5,True

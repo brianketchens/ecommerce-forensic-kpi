@@ -1,0 +1,6 @@
+scenario,peak_snapshot,open_orders,open_units_remaining,open_overdue_orders,open_overdue_units_remaining,open_expedited_orders,open_standard_orders,oldest_open_order_age_hours
+baseline,2026-08-05 09:00:00,33,992.00000175,3,74.0,6,27,1.4833333333333334
+labor_reallocation_night_to_morning,2026-08-08 09:00:00,25,782.5000001388889,0,0.0,4,21,0.7
+additional_morning_associate,2026-08-08 09:00:00,25,782.5000001388889,0,0.0,4,21,0.7
+staging_relief,2026-08-28 09:00:00,26,900.8333367888889,0,0.0,6,20,0.6666666666666666
+productivity_plus_10pct,2026-08-08 09:00:00,25,782.8666668055555,0,0.0,4,21,0.7

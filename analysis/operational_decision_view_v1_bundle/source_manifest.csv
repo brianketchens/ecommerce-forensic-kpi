@@ -1,0 +1,5 @@
+path,role
+raw_inputs,/mnt/data/work/ (read-only source tables)
+baseline_order_level_sla_replay.csv,prior validated baseline replay output
+intervention_scenario_comparison.csv,scenario summary and illustrative cost sensitivity
+FROZEN_SLA_REPLAY_CONTRACT_v1.md,accepted replay semantics

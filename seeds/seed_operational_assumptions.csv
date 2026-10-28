@@ -1,0 +1,9 @@
+assumption_id,kpi_target_name,operational_factor,expected_baseline_value,impact_coefficient,unit_of_measure,variance_class,is_active
+ASM-001,Order Fulfillment Cycle Time,Picker Staffing Level,45.0,0.85,Pickers/Shift,Avoidable,true
+ASM-002,Order Fulfillment Cycle Time,Conveyor System Downtime,12.0,1.40,Minutes/Shift,Unavoidable,true
+ASM-003,On-Time Delivery Rate,Driver Availability,95.0,1.15,Percent Rate,Avoidable,true
+ASM-004,On-Time Delivery Rate,Severe Weather Delay,0.0,2.50,Hours/Route,Unavoidable,true
+ASM-005,Inventory Accuracy Rate,Manual Cycle Count Frequency,98.5,0.65,Percent Accuracy,Avoidable,true
+ASM-006,Order Processing Cost,Overtime Hours Allocation,15.50,-0.45,USD/Hour,Avoidable,true
+ASM-007,Warehouse Pick Throughput,SKU Slotting Optimization Index,85.0,0.92,Efficiency Score,Avoidable,true
+ASM-008,Return Processing Lead Time,Quality Control Inspection Speed,24.0,1.10,Hours/Batch,Avoidable,true

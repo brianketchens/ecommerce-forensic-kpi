@@ -1,0 +1,607 @@
+version: 2
+
+models:
+
+  # ==========================================================
+  # STAGING
+  # ==========================================================
+
+  - name: stg_customers
+    description: "Standardized customer master data."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_products
+    description: "Standardized product master data."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+
+      - name: sku
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_orders
+    description: "Standardized order-level demand and SLA observations."
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        tests:
+          - not_null
+
+      - name: order_placed_at
+        tests:
+          - not_null
+
+      - name: units_required
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - 'Pending'
+                - 'Picking'
+                - 'Staged'
+                - 'Completed'
+                - 'Cancelled'
+                - 'Dispensed'
+                - 'Delayed'
+                - 'Backlog'
+
+  - name: stg_order_items
+    description: "Standardized order-line detail linking orders to products."
+    columns:
+      - name: order_item_id
+        tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: product_id
+        tests:
+          - not_null
+
+      - name: quantity
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+  - name: stg_shift_logs
+    description: "Standardized scheduled and actual labor observations by shift."
+    columns:
+      - name: date
+        tests:
+          - not_null
+
+      - name: shift
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Morning'
+                - 'Afternoon'
+                - 'Night'
+
+  - name: stg_hourly_capacity
+    description: "Standardized hourly system and constrained capacity observations."
+    columns:
+      - name: date
+        tests:
+          - not_null
+
+      - name: hour
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 23"
+
+  - name: stg_hourly_demand
+    description: "Hourly demand entering the operational system."
+    columns:
+      - name: time_bucket
+        tests:
+          - not_null
+
+      - name: facility_id
+        tests:
+          - not_null
+
+      - name: incoming_demand_units
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+  - name: stg_hourly_backlog
+    description: "Hourly backlog state and throughput reconciliation."
+    columns:
+      - name: time_bucket
+        tests:
+          - not_null
+
+      - name: facility_id
+        tests:
+          - not_null
+
+      - name: opening_backlog_units
+        tests:
+          - not_null
+
+      - name: closing_backlog_units
+        tests:
+          - not_null
+
+  - name: stg_kpi_telemetry
+    description: "Standardized hourly KPI observations and targets."
+    columns:
+      - name: time_bucket
+        tests:
+          - not_null
+
+      - name: facility_id
+        tests:
+          - not_null
+
+      - name: kpi_target_name
+        tests:
+          - not_null
+
+      - name: target_kpi_value
+        tests:
+          - not_null
+
+      - name: actual_kpi_value
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+  - name: stg_operational_telemetry
+    description: "Standardized operational factor observations used for KPI variance decomposition."
+    columns:
+      - name: time_bucket
+        tests:
+          - not_null
+
+      - name: facility_id
+        tests:
+          - not_null
+
+      - name: operational_factor
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'headcount'
+                - 'staging_capacity'
+
+      - name: actual_observed_value
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+  - name: stg_incident_logs
+    description: "Operational bottleneck events and T0-T5 response timeline."
+    columns:
+      - name: incident_id
+        tests:
+          - unique
+          - not_null
+
+      - name: facility_id
+        tests:
+          - not_null
+
+      - name: incident_type
+        tests:
+          - not_null
+
+      - name: severity
+        tests:
+          - not_null
+
+      - name: root_cause
+        tests:
+          - not_null
+
+      - name: t0_genesis
+        tests:
+          - not_null
+
+      - name: t1_detection
+        tests:
+          - not_null
+
+      - name: t2_escalation
+        tests:
+          - not_null
+
+      - name: t3_intervention
+        tests:
+          - not_null
+
+      - name: t4_pil
+        tests:
+          - not_null
+
+      - name: t5_recovery
+        tests:
+          - not_null
+
+      - name: capacity_reduction_pct
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+          - dbt_utils.expression_is_true:
+              expression: "<= 1"
+
+
+  # ==========================================================
+  # MARTS
+  # ==========================================================
+
+  - name: assumption_registry
+    description: >
+      Active operational assumptions used to decompose KPI variance.
+      Each assumption defines an expected baseline, operational impact
+      coefficient, unit of measure, and variance classification.
+    columns:
+      - name: assumption_id
+        description: "Unique identifier for the operational assumption."
+        tests:
+          - unique
+          - not_null
+
+      - name: kpi_target_name
+        description: "KPI to which the assumption applies."
+        tests:
+          - not_null
+
+      - name: operational_factor
+        description: "Operational condition associated with the assumption."
+        tests:
+          - not_null
+
+      - name: expected_baseline_value
+        description: "Expected baseline value for the operational factor."
+        tests:
+          - not_null
+
+      - name: impact_coefficient
+        description: "Modeled KPI impact per unit change in the operational factor."
+        tests:
+          - not_null
+
+      - name: unit_of_measure
+        description: "Unit in which the operational factor is measured."
+        tests:
+          - not_null
+
+      - name: variance_class
+        description: "Classification of the modeled variance as avoidable or unavoidable."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Avoidable'
+                - 'Unavoidable'
+
+      - name: is_active
+        description: "Indicates whether the assumption is active in the registry."
+        tests:
+          - not_null
+
+      - name: updated_at
+        description: "Timestamp when the active assumption registry was materialized."
+        tests:
+          - not_null
+
+
+  - name: fct_incident_response_forensics
+    description: "Calculates operational response latencies and flags PIL breaches."
+    columns:
+      - name: incident_id
+        tests:
+          - unique
+          - not_null
+
+      - name: detection_latency_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: escalation_lag_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: detection_to_intervention_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: total_intervention_latency_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: window_to_pil_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: total_recovery_duration_minutes
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: pil_buffer_margin_minutes
+        tests:
+          - not_null
+
+      - name: is_pil_breached
+        tests:
+          - not_null
+
+      - name: incident_response_status
+        tests:
+          - accepted_values:
+              values:
+                - 'PIL Breach (Late Intervention)'
+                - 'Successful Pre-PIL Intervention'
+
+
+  - name: fct_forensic_kpi_variance
+    description: >
+      Forensic decomposition of observed KPI performance into target,
+      condition-driven variance, and unexplained operational residual.
+    columns:
+      - name: time_bucket
+        description: "Hourly KPI observation timestamp."
+        tests:
+          - not_null
+
+      - name: facility_id
+        description: "Facility associated with the KPI observation."
+        tests:
+          - not_null
+
+      - name: kpi_target_name
+        description: "KPI being decomposed."
+        tests:
+          - not_null
+
+      - name: target_kpi_value
+        description: "Baseline KPI target before observed-condition impacts."
+        tests:
+          - not_null
+
+      - name: delta_unavoidable
+        description: "KPI variance attributed to conditions classified as unavoidable."
+        tests:
+          - not_null
+
+      - name: delta_avoidable
+        description: "KPI variance attributed to conditions classified as avoidable."
+        tests:
+          - not_null
+
+      - name: expected_kpi_given_conditions
+        description: "Expected KPI after applying modeled condition impacts to the target."
+        tests:
+          - not_null
+
+      - name: actual_kpi_value
+        description: "Observed KPI value."
+        tests:
+          - not_null
+
+      - name: operational_residual
+        description: "Unexplained difference between observed KPI and condition-adjusted expectation."
+        tests:
+          - not_null
+
+      - name: kpi_variance_rolling
+        description: "Rolling seven-hour variance of the observed KPI."
+        tests:
+          - not_null
+
+  - name: fct_operating_envelope
+    description: >
+      Hourly operating-envelope fact describing available work, nominal and
+      effective capacity, physical throughput, capacity constraints, and
+      workload regime.
+
+    columns:
+      - name: time_bucket
+        description: "Hourly operating timestamp."
+        tests:
+          - not_null
+
+      - name: facility_id
+        description: "Facility associated with the operating observation."
+        tests:
+          - not_null
+
+      - name: work_available_units
+        description: "Incoming demand plus opening backlog available to the operation."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: physical_throughput_units
+        description: "Units physically processed during the operating hour."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: closing_backlog_units
+        description: "Backlog remaining at the end of the operating hour."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: labor_capacity_units
+        description: "Nominal labor-derived capacity for the operating hour."
+        tests:
+          - not_null
+
+      - name: staging_capacity_units
+        description: "Available staging capacity for the operating hour."
+        tests:
+          - not_null
+
+      - name: effective_capacity_units
+        description: >
+          Effective operating capacity after applying the modeled operating
+          constraints recorded by the simulation.
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: binding_constraint
+        description: "Physical capacity resource limiting the operating envelope."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Labor'
+                - 'Staging'
+                - 'None'
+
+      - name: operating_regime
+        description: "Workload state experienced by the operation during the hour."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Demand-Limited'
+                - 'Labor-Bound'
+                - 'Staging-Bound'
+                - 'Incident-Adjusted'
+                - 'Capacity-Bound'
+
+
+  - name: fct_kpi_attainability
+    description: >
+      Hourly KPI attainability analysis that evaluates whether the KPI target
+      was physically achievable under the observed workload and effective
+      operating capacity.
+
+    columns:
+      - name: time_bucket
+        description: "Hourly KPI observation timestamp."
+        tests:
+          - not_null
+
+      - name: facility_id
+        description: "Facility associated with the KPI observation."
+        tests:
+          - not_null
+
+      - name: kpi_target_name
+        description: "KPI evaluated for operational attainability."
+        tests:
+          - not_null
+
+      - name: target_kpi_value
+        description: "KPI target evaluated against the observed operating envelope."
+        tests:
+          - not_null
+
+      - name: telemetric_kpi_value
+        description: >
+          Observed KPI telemetry value reported for the operating hour.
+          This is a measured KPI observation and is distinct from physical
+          throughput used to evaluate operational attainability.
+        tests:
+          - not_null
+
+      - name: attainable_ceiling
+        description: >
+          Maximum physical KPI output available under the observed workload
+          and effective operating capacity.
+        tests:
+          - not_null
+
+      - name: kpi_operationally_attainable
+        description: >
+          Indicates whether the KPI target was physically reachable under the
+          observed workload and effective operating capacity.
+        tests:
+          - not_null
+
+      - name: demand_insufficient_for_kpi
+        description: >
+          Indicates whether available work was insufficient to reach the KPI
+          target.
+        tests:
+          - not_null
+
+      - name: capacity_insufficient_for_kpi
+        description: >
+          Indicates whether effective operating capacity was insufficient to
+          reach the KPI target.
+        tests:
+          - not_null
+
+      - name: operation_reached_attainable_ceiling
+        description: >
+          Indicates whether physical throughput reached the maximum output
+          available under the observed workload and effective operating
+          capacity.
+        tests:
+          - not_null
+
+      - name: potential_execution_gap
+        description: >
+          Indicates that the KPI target was operationally attainable, but
+          physical throughput remained below both the target and the attainable
+          physical ceiling.
+        tests:
+          - not_null
+
+      - name: attainability_status
+        description: >
+          Business classification of the KPI outcome based on target
+          attainability and observed physical throughput under the operating
+          conditions.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 'Attained'
+                - 'Potential Execution Gap'
+                - 'Demand Insufficient'
+                - 'Capacity Insufficient'
+                - 'Demand and Capacity Insufficient'

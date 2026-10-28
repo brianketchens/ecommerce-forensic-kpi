@@ -1,0 +1,13 @@
+{
+  "raw_customers.csv": "48de25f0d8ce253e235e30dd6ed58d88b77955db07450d850931ef1985c8d8a7",
+  "raw_products.csv": "b8db2bd9b1e2c2981f4b4c78e7e3f295d114f56040846a4dadb1fc47a9b65e62",
+  "raw_orders.csv": "1d6e653e359d26f18dc7199e8eeb806961414f90f86ef87c749ac6261c6e46fa",
+  "raw_order_items.csv": "ebfeb5856849952da8b45a1ac9498057fdc57cc9c9b35c15e50534fb3204cbfb",
+  "raw_shift_logs.csv": "b17d5041ac48d60a653971cf5a780cadfbfbb95b205775220e35420830e4b033",
+  "raw_hourly_capacity.csv": "564044057cd6bfdab89867efd3577bde47f28991a6caa56d42136f1e64cd87e0",
+  "raw_kpi_telemetry.csv": "3867a8313c960bc45b85b41a3f70ca42296662e4df5f66416121715b700026a3",
+  "raw_incident_logs.csv": "6e6a1716b283b7ae3ae0b188d51516278605455e52e1945fc7c8bc849de45247",
+  "raw_hourly_demand.csv": "5c15a3d9a970706c11cc2e4b990acd8d3c5cea190161f8bff9433cb3e2de54a4",
+  "raw_hourly_backlog.csv": "747d6dd87a59580903c7b480a2c75a828872d87e2888be162edd3e370a6f79d5",
+  "simulation_truth.csv": "9b17009d53dabaf1cf34c499dc7b8f4165aa15c8cf6243d0d927a528b11e5c8f"
+}

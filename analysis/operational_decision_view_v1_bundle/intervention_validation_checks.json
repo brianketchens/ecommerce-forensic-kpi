@@ -1,0 +1,52 @@
+{
+  "baseline": {
+    "PASS_order_count_preserved": true,
+    "PASS_units_preserved": true,
+    "PASS_all_completed_or_remaining_accounted": true,
+    "PASS_no_completion_before_arrival": true,
+    "PASS_capacity_nonnegative": true,
+    "PASS_target_kpi_unchanged": true,
+    "PASS_sla_derived_from_deadline": true,
+    "PASS_snapshot_rows_720": true
+  },
+  "labor_reallocation_night_to_morning": {
+    "PASS_order_count_preserved": true,
+    "PASS_units_preserved": true,
+    "PASS_all_completed_or_remaining_accounted": true,
+    "PASS_no_completion_before_arrival": true,
+    "PASS_capacity_nonnegative": true,
+    "PASS_target_kpi_unchanged": true,
+    "PASS_sla_derived_from_deadline": true,
+    "PASS_snapshot_rows_720": true
+  },
+  "additional_morning_associate": {
+    "PASS_order_count_preserved": true,
+    "PASS_units_preserved": true,
+    "PASS_all_completed_or_remaining_accounted": true,
+    "PASS_no_completion_before_arrival": true,
+    "PASS_capacity_nonnegative": true,
+    "PASS_target_kpi_unchanged": true,
+    "PASS_sla_derived_from_deadline": true,
+    "PASS_snapshot_rows_720": true
+  },
+  "staging_relief": {
+    "PASS_order_count_preserved": true,
+    "PASS_units_preserved": true,
+    "PASS_all_completed_or_remaining_accounted": true,
+    "PASS_no_completion_before_arrival": true,
+    "PASS_capacity_nonnegative": true,
+    "PASS_target_kpi_unchanged": true,
+    "PASS_sla_derived_from_deadline": true,
+    "PASS_snapshot_rows_720": true
+  },
+  "productivity_plus_10pct": {
+    "PASS_order_count_preserved": true,
+    "PASS_units_preserved": true,
+    "PASS_all_completed_or_remaining_accounted": true,
+    "PASS_no_completion_before_arrival": true,
+    "PASS_capacity_nonnegative": true,
+    "PASS_target_kpi_unchanged": true,
+    "PASS_sla_derived_from_deadline": true,
+    "PASS_snapshot_rows_720": true
+  }
+}

@@ -1,0 +1,35 @@
+name: 'ecommerce_forensic_KPI'
+version: '1.0.0'
+config-version: 2
+
+profile: 'ecommerce_forensic_KPI'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  ecommerce_forensic_KPI:
+    +materialized: view
+
+seeds:
+  ecommerce_forensic_KPI:
+    +quote_columns: true
+    seed_operational_assumptions:
+      +schema: raw_data
+      +column_types:
+        assumption_id: varchar(100)
+        kpi_target_name: varchar(100)
+        operational_factor: varchar(100)
+        expected_baseline_value: numeric
+        impact_coefficient: numeric
+        unit_of_measure: varchar(50)
+        variance_class: varchar(50)
+        is_active: boolean

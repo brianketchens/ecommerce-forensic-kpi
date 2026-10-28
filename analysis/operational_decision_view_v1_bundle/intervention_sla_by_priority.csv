@@ -1,0 +1,11 @@
+scenario,priority,orders,late_completed,open_overdue_at_horizon,SLA_attainment_by_horizon,median_lateness_minutes_among_late,p90_lateness_minutes_among_late
+baseline,Standard,4519,17,0,0.9962381057756141,7.393939709066667,10.903030582686668
+baseline,Expedited,1117,20,0,0.982094897045658,11.996969868166667,61.50909120373
+labor_reallocation_night_to_morning,Standard,4519,8,0,0.998229696835583,29.40909094544167,61.009090949335
+labor_reallocation_night_to_morning,Expedited,1117,10,0,0.991047448522829,10.083414396125,58.12727274847166
+additional_morning_associate,Standard,4519,0,0,1.0,0.0,0.0
+additional_morning_associate,Expedited,1117,4,0,0.9964189794091316,7.583414396133334,10.602048644328335
+staging_relief,Standard,4519,0,0,1.0,0.0,0.0
+staging_relief,Expedited,1117,15,0,0.9865711727842436,3.103896616433333,14.800000071533333
+productivity_plus_10pct,Standard,4519,0,0,1.0,0.0,0.0
+productivity_plus_10pct,Expedited,1117,11,0,0.990152193375112,19.000000409816668,25.977941538249997
